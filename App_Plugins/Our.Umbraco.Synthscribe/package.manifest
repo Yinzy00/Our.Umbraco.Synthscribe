@@ -1,0 +1,8 @@
+﻿{
+    "name": "Our.Umbraco.Synthscribe",
+    "version": "1.0.0-beta",
+  "allowPackageTelemetry": true,
+  "javascript": [
+    "/App_Plugins/Our.Umbraco.Synthscribe/backoffice/synthscribe.js"
+  ]
+}

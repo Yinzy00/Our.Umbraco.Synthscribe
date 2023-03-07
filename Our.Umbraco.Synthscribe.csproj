@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <Product>Our.Umbraco.Synthscribe</Product>
+    <PackageId>Our.Umbraco.Synthscribe</PackageId>
+    <Title>Our.Umbraco.Synthscribe</Title>
+    <Description>...</Description>
+    <PackageTags>umbraco plugin package</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.3.2" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins\Our.Umbraco.Synthscribe\**" ExcludeFromSingleFile="true" CopyToPublishDirectory="Always" />
+    <None Include="buildTransitive\**" Pack="true" PackagePath="buildTransitive" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="App_Plugins\Our.Umbraco.Synthscribe\backoffice\synthscribe.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="App_Plugins\Our.Umbraco.Synthscribe\package.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="App_Plugins\Our.Umbraco.Synthscribe\package.manifest">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

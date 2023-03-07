@@ -1,0 +1,21 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OurUmbracoSynthscribeContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\Our.Umbraco.Synthscribe\**\*.*</OurUmbracoSynthscribeContentFilesPath>
+  </PropertyGroup>
+
+  <Target Name="CopyOurUmbracoSynthscribeAssets" BeforeTargets="Build">
+    <ItemGroup>
+      <OurUmbracoSynthscribeContentFiles Include="$(OurUmbracoSynthscribeContentFilesPath)" />
+    </ItemGroup>
+    <Message Text="Copying Our.Umbraco.Synthscribe files: $(OurUmbracoSynthscribeContentFilesPath) - #@(OurUmbracoSynthscribeContentFiles->Count()) files" Importance="high" />
+    <Copy SourceFiles="@(OurUmbracoSynthscribeContentFiles)" DestinationFiles="@(OurUmbracoSynthscribeContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\Our.Umbraco.Synthscribe\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="ClearOurUmbracoSynthscribeAssets" BeforeTargets="Clean">
+    <ItemGroup>
+      <OurUmbracoSynthscribeDir Include="$(MSBuildProjectDirectory)\App_Plugins\Our.Umbraco.Synthscribe\" />
+    </ItemGroup>
+    <Message Text="Clear old Our.Umbraco.Synthscribe data" Importance="high" />
+    <RemoveDir Directories="@(OurUmbracoSynthscribeDir)" />
+  </Target>
+</Project>

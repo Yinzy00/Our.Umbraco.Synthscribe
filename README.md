@@ -94,7 +94,7 @@ Use the command “rnd”.
 ## License
 Copyright &copy; [Yari Mariën](https://github.com/Yinzy00/).
 
-All source code is licensed under the [Mozilla Public License 2.0](../LICENSE).
+All source code is licensed under the [Mozilla Public License 2.0](../master/LICENSE.txt).
 
 For more information about the Mozilla Public License 2.0, please visit: https://www.mozilla.org/en-US/MPL/2.0/FAQ/
 

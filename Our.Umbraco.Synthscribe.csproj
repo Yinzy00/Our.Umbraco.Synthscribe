@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Core" Version="10.3.2" />
     <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.3.2" />
     <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.3.2" />
   </ItemGroup>
@@ -24,6 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\content\edit.html" />
+    <None Remove="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\content\translateContent.controller.js" />
+    <None Remove="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\dictionary\edit.html" />
+    <None Remove="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\dictionary\translateDictioanry.controller.js" />
     <None Remove="App_Plugins\Our.Umbraco.Synthscribe\package.manifest" />
   </ItemGroup>
 

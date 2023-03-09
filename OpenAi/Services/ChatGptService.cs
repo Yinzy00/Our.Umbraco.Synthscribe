@@ -16,7 +16,6 @@ namespace Our.Umbraco.Synthscribe.OpenAi.Services
 
         public ChatGptService(string apiKey)
         {
-            //TMP HARDCODED KEY
             _apiKey =  apiKey;
         }
 
@@ -35,7 +34,7 @@ namespace Our.Umbraco.Synthscribe.OpenAi.Services
 
                 var responseObj = JsonConvert.DeserializeObject<ChatGptCompletionResponse>(responseData);
 
-                return responseObj?.choices?.FirstOrDefault()?.message?.content;
+                return responseObj?.choices?.FirstOrDefault()?.message?.content?? "Something went wrong...";
 
             }
         }

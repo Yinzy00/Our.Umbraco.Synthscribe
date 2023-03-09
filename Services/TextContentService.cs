@@ -28,17 +28,17 @@ namespace Our.Umbraco.Synthscribe.Services
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.system.ToString(),
-                        Content = "Your only purpose is generating text for a website. Generate text in the language of the given context."
+                        Content = "You're a text generator for websites."
                     },
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.user.ToString(),
-                        Content = $"Context: \"{context}\""
+                        Content = $"{context}, Return only the requested text. Return text in the language of the message. And return in 1 answer, no multiple option."
                     }
                 }
             });
 
-            return response??"No return value...";
+                return response;
         }
     }
 }

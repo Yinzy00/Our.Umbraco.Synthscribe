@@ -10,6 +10,6 @@ namespace Our.Umbraco.Synthscribe.OpenAi.Models
     internal class OpenAiCompletionBase
     {
         [JsonProperty("model")]
-        public string Model { get; set; }
+        public string Model { get; internal set; }
     }
 }

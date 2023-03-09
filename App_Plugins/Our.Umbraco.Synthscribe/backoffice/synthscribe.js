@@ -61,7 +61,7 @@ const setSynthscribeEventHandlers = async () => {
 
                     setSynthscribeEventHandlers();
 
-                }, 500);
+                }, 1000);
 
             });
             setSynthscribeDataAttribute(clickable);

@@ -3,6 +3,7 @@
     "version": "1.0.0-beta",
   "allowPackageTelemetry": true,
   "javascript": [
-    "/App_Plugins/Our.Umbraco.Synthscribe/backoffice/synthscribe.js"
+    "/App_Plugins/Our.Umbraco.Synthscribe/backoffice/synthscribe.js",
+    "/App_Plugins/Our.Umbraco.Synthscribe/backoffice/translation/dictionary/translateDictioanry.controller.js"
   ]
 }

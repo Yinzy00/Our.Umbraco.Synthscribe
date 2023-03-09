@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Our.Umbraco.Synthscribe.NotificationHandlers;
 using Our.Umbraco.Synthscribe.OpenAi.Services;
 using Our.Umbraco.Synthscribe.OpenAi.Services.Interfaces;
 using Our.Umbraco.Synthscribe.Services;
@@ -12,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Notifications;
 
 namespace Our.Umbraco.Synthscribe.Composers
 {
@@ -25,7 +28,12 @@ namespace Our.Umbraco.Synthscribe.Composers
 
                 return new ChatGptService(config.GetValue<string>("OpenAi:apiKey"));
             });
+
             builder.Services.AddTransient<ITextContentService, TextContentService>();
+            builder.Services.AddTransient<ITranslationService, TranslationService>();
+            builder.Services.AddTransient<ITranslateDictionaryService, TranslateDictionaryService>();
+
+            builder.AddNotificationHandler<MenuRenderingNotification, MenuRenderingNotificationHandler>();
         }
     }
 }

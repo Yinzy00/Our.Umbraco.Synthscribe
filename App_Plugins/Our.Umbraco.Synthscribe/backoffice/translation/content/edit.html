@@ -1,46 +1,62 @@
-﻿<!-- <div ng-controller="Our.Umbraco.Synthscribe.Backoffice.ContentController as vm">
+﻿<div ng-controller="Our.Umbraco.Synthscribe.Backoffice.DictionaryController as vm">
     <umb-pane>
-        <umb-load-indicator ng-show="vm.isLoading"></umb-load-indicator>
-
-        <p>This will use an AI translation service to complete all the dictionary items (by translating from the selected language).</p>
-
+        <umb-load-indicator ng-if="vm.isLoading"></umb-load-indicator>
+        <h4>
+            Translating {{vm.dictionaryKey}}
+        </h4>
+        <p>
+            This will use an AI translation service to translate dictionary item(s) from the default languag
+            ({{vm.defaultLanguage}}).
+        </p>
+        <p>
+            By leaving the "Translate To" field empty you can translate into all available languages.
+        </p>
+        <p>
+            Use the "Overwrite existing values" toggle to decide if you want to overwrite existing values or not. If enabled, existing values will be overwritten with the new translation.
+        </p>
+        <p>
+            If you also want to translate all descending items you can youse the "Translate descendants" toggle.
+        </p>
         <hr />
 
-        <div ng-show="vm.active">
+        <div ng-if="vm.active && !vm.isLoading">
 
             <div class="control-group">
-                <label for="languageFrom">Translate From:</label>
+                <label for="languageFrom">Translate To:</label>
                 <br />
-                <select id="languageFrom" ng-model="vm.langFrom" ng-options="item.CultureName for item in vm.languages" class="input-large"></select>
+                <select id="languageFrom" ng-model="vm.langTo" ng-options="item for item in vm.languages"
+                        class="input-large"></select>
             </div>
 
             <div class="control-group">
-                <umb-toggle checked="vm.overwrite"
-                            on-click="vm.toggle()"
-                            show-labels="true"
-                            label-on="Overwrite existing values"
-                            label-off="Ignore existing values"
-                            label-position="right"
+                <umb-toggle checked="vm.overwrite" on-click="vm.toggleOverwrite()" show-labels="true"
+                            label-on="Overwrite existing values" label-off="Ignore existing values" label-position="right"
+                            hide-icons="true">
+                </umb-toggle>
+            </div>
+            <div class="control-group">
+                <umb-toggle checked="vm.translateDescendants" on-click="vm.toggleDescendants()" show-labels="true"
+                            label-on="Translate descendants" label-off="Don't translate descendants" label-position="right"
                             hide-icons="true">
                 </umb-toggle>
             </div>
 
             <div class="control-group umb-control-group">
                 <br />
-                <umb-button action="vm.translate()"
-                            type="button"
-                            button-style="action"
-                            state="vm.buttonState"
-                            label="Translate"
-                            disabled="vm.buttonState === 'busy'">
+                <umb-button action="vm.translate()" type="button" button-style="action" state="vm.buttonState"
+                            label="Translate" disabled="vm.buttonState === 'busy'">
                 </umb-button>
 
             </div>
         </div>
 
-        <p ng-show="vm.alert" class="alert alert-{{vm.alert.alertType | lowercase}}">{{vm.alert.message}}</p>
+        <p ng-if="vm.alert" class="alert alert-{{vm.alert.alertType | lowercase}}">{{vm.alert.message}}</p>
+
+        <div ng-if="!vm.active && !vm.isLoading">
+            <p class="alert alert-error">Something went wrong. No NodeId found... Try again!</p>
+        </div>
 
     </umb-pane>
 
 
-</div> -->
+</div>

@@ -33,6 +33,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\content\edit.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Update="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\content\translateContent.controller.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Update="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\dictionary\edit.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Update="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\dictionary\translateDictioanry.controller.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
     <Content Update="App_Plugins\Our.Umbraco.Synthscribe\package.manifest">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>

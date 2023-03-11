@@ -1,105 +1,146 @@
-﻿// (function () {
-//     'use strict';
+﻿(function () {
+    'use strict';
 
-//     angular.module("umbraco")
-//         .controller("Our.Umbraco.Synthscribe.Backoffice.ContentController",
-//             function (diploTranslateResources, notificationsService, diploTranslatorHub) {
-//                 var vm = this;
-//                 //vm.isLoading = false;
-//                 //vm.alert = null;
-//                 vm.active = true;
-//                 //vm.overwrite = false;
-//                 //vm.languages = [];
-//                 //vm.langFrom = null;
+    angular.module("umbraco")
+        .controller("Our.Umbraco.Synthscribe.Backoffice.DictionaryController",
+            function ($scope, $http, notificationsService, appState) {
+                var vm = this;
+                vm.isLoading = false;
+                vm.alert = null;
+                //Check if 
+                vm.active = false;
+                vm.overwrite = false;
+                vm.languages = [];
+                vm.defaultLanguage = null;
+                vm.langTo = '';
+                vm.nodeId = null;
+                vm.dictionaryKey = null;
+                vm.translateDescendants = false;
+                vm.translationFailed = null;
 
+                //Get Node Id From Menu Actions
+                const initAdditionalData = async () => {
 
-//                 // Populates language select
+                    appState.getMenuState("menuActions")?.forEach(action => {
+                        if (action.alias === "translate")
+                            vm.nodeId = action.metaData.nodeId;
+                        vm.dictionaryKey = action.metaData.dictionaryKey;
+                    });
+                }
 
-//                 diploTranslateResources.getLanguages().then(function (data) {
-//                     vm.languages = data;
-//                     vm.langFrom = vm.languages.filter(lang => lang.IsDefault)[0];
-//                 });
+                //Get Language data from API
+                const initLanguages = async () => {
 
-//                 // Checks the config is OK
+                    var response = await $http({
+                        method: "GET",
+                        url: "/umbraco/backoffice/Synthscribe/Translation/Languages"
+                    });
 
-//                 diploTranslateResources.checkConfiguration().then(function (response) {
-//                     if (!response.Ok) {
-//                         vm.alert = { alertType: "error", message: response.Message };
-//                         vm.active = false;
-//                         return;
-//                     }
-//                     else {
-//                         Init();
-//                     }
-//                 });
+                    if (response.status == 200) {
+                        var languages = await response.data.languages;
+                        vm.languages = ["", ...languages];
+                        vm.defaultLanguage = await response.data.defaultLanguage;
+                    }
+                    else {
+                        console.log("Error: " + response.status);
+                    }
+                }
 
-//                 // Run after config is checked
+                //Translate selected dictionary & descendants (if selected)
+                vm.translate = async () => {
 
-//                 const Init = function () {
-//                     vm.active = true;
-// //                    InitHub();
-//                 }
+                    enableLoading();
 
-//                 // Handles translate button click
+                    var response = null;
 
-//                 vm.translate = function () {
+                    if (vm.nodeId == "-1") {
+                        response = await $http({
+                            method: "POST",
+                            url: "/umbraco/backoffice/Synthscribe/Translation/TranslateAllDictionaries",
+                            data: {
+                                dictionaryId: vm.nodeId,
+                                languageTo: vm.langTo,
+                                overwrite: vm.overwrite,
+                                translateDescendants: vm.translateDescendants
+                            },
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        });
+                    }
+                    else {
+                        response = await $http({
+                            method: "POST",
+                            url: "/umbraco/backoffice/Synthscribe/Translation/TranslateDictionary",
+                            data: {
+                                dictionaryId: vm.nodeId,
+                                languageTo: vm.langTo,
+                                overwrite: vm.overwrite,
+                                translateDescendants: vm.translateDescendants
+                            },
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        });
+                    }
 
-//                     if (vm.overwrite) {
-//                         if (!window.confirm("You have chosen to overwrite existing dictionary values with new translations. Are you sure?")) {
-//                             return;
-//                         }
-//                     }
+                    if (response?.status == 200) {
+                        notificationsService.success("Translation succesfull");
+                        vm.alert = {
+                            alertType: 'success',
+                            message: "Dictionary / dictionaries translated successfully! (Click escape to exit)"
+                        };
+                        vm.translationFailed = false;
+                    }
+                    else {
+                        notificationsService.error("Translation failed");
+                        vm.alert = {
+                            alertType: 'error',
+                            message: "Something went wrong! Try again...!"
+                        };
+                        vm.translationFailed = true;
+                    }
 
-//                     vm.buttonState = "busy";
-//                     vm.isLoading = true;
-//                     const clientId = getClientId();
+                    disableLoading();
 
-//                     // calls API service
+                    $scope.$apply();
+                }
 
-//                     diploTranslateResources.translateAllDictionary(clientId, vm.langFrom.IsoCode, vm.overwrite).then(function (response) {
+                vm.toggleOverwrite = () => {
+                    vm.overwrite = !vm.overwrite;
+                }
 
-//                         vm.isLoading = false;
-//                         vm.buttonState = "success";
+                vm.toggleDescendants = () => {
+                    vm.translateDescendants = !vm.translateDescendants;
+                }
 
-//                         if (response.ErrorCount > 0) {
-//                             notificationsService.warning(response.Message);
-//                         }
-//                         else { // OK
-//                             notificationsService.success(response.Message);
+                const enableLoading = () => {
+                    vm.isLoading = true;
+                }
 
-//                             // reload
+                const disableLoading = () => {
+                    vm.isLoading = false;
+                }
 
-//                             setTimeout(function () {
-//                                 window.location.reload(true);
-//                             }, 2000);
-//                         }
-//                     });
-//                 }
+                const init = async () => {
 
-//                 vm.toggle = function () {
-//                     vm.overwrite = !vm.overwrite;
-//                 }
+                    //Todo
+                    enableLoading();
 
-//                 // SignalR stuff
+                    initAdditionalData();
 
-//                 function InitHub() {
-//                     diploTranslatorHub.initHub(function (hub) {
-//                         vm.hub = hub;
+                    if (!vm.nodeId)
+                        return;
 
-//                         vm.hub.on('alert', function (data) {
-//                             vm.alert = data;
-//                         });
+                    await initLanguages();
 
-//                         vm.hub.start();
-//                     });
-//                 }
+                    vm.active = true;
 
-//                 function getClientId() {
-//                     if ($.connection !== undefined) {
-//                         return $.connection.connectionId;
-//                     }
-//                     return "";
-//                 }
+                    disableLoading();
 
-//             });
-// })();
+                    $scope.$apply();
+                }
+                init();
+
+            });
+})();

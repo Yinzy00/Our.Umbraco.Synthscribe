@@ -6,7 +6,8 @@
             function ($scope, $http, notificationsService, appState) {
                 var vm = this;
                 vm.isLoading = false;
-                //vm.alert = null;
+                vm.alert = null;
+                //Check if 
                 vm.active = false;
                 vm.overwrite = false;
                 vm.languages = [];
@@ -15,33 +16,7 @@
                 vm.nodeId = null;
                 vm.dictionaryKey = null;
                 vm.translateDescendants = false;
-
-                //TODO
-                //Populate languages
-                //
-
-                //$http("/umbraco/backoffice/Synthscribe/Translation/TranslateDictionary",)
-
-
-                //diploTranslateResources.getLanguages().then(function (data) {
-                //    vm.languages = umbRequestHelper.resourcePromise($http.get(translateApiUrl + "GetLanguages"));
-                //    vm.langFrom = vm.languages.filter(lang => lang.IsDefault)[0];
-                //});
-
-                // Checks the config is OK
-
-                //diploTranslateResources.checkConfiguration().then(function (response) {
-                //    if (!response.Ok) {
-                //        vm.alert = { alertType: "error", message: response.Message };
-                //        vm.active = false;
-                //        return;
-                //    }
-                //    else {
-                //        Init();
-                //    }
-                //});
-
-                // Run after config is checked
+                vm.translationFailed = null;
 
                 //Get Node Id From Menu Actions
                 const initAdditionalData = async () => {
@@ -55,6 +30,7 @@
 
                 //Get Language data from API
                 const initLanguages = async () => {
+
                     var response = await $http({
                         method: "GET",
                         url: "/umbraco/backoffice/Synthscribe/Translation/Languages"
@@ -70,64 +46,59 @@
                     }
                 }
 
-                // Handles translate button click
-
-                //vm.translate = function () {
-
-                //    if (vm.overwrite) {
-                //        if (!window.confirm("You have chosen to overwrite existing dictionary values with new translations. Are you sure?")) {
-                //            return;
-                //        }
-                //    }
-
-                //    vm.buttonState = "busy";
-                //    vm.isLoading = true;
-
-                //    // calls API service
-
-                //    //diploTranslateResources.translateAllDictionary(clientId, vm.langFrom.IsoCode, vm.overwrite).then(function (response) {
-
-                //    //    vm.isLoading = false;
-                //    //    vm.buttonState = "success";
-
-                //    //    if (response.ErrorCount > 0) {
-                //    //        notificationsService.warning(response.Message);
-                //    //    }
-                //    //    else { // OK
-                //    //        notificationsService.success(response.Message);
-
-                //    //        // reload
-
-                //    //        setTimeout(function () {
-                //    //            window.location.reload(true);
-                //    //        }, 2000);
-                //    //    }
-                //    //});
-                //}
-
+                //Translate selected dictionary & descendants (if selected)
                 vm.translate = async () => {
 
                     enableLoading();
 
-                    var response = await $http({
-                        method: "POST",
-                        url: "/umbraco/backoffice/Synthscribe/Translation/TranslateDictionary",
-                        data: {
-                            dictionaryId: vm.nodeId,
-                            languageTo: vm.langTo,
-                            overwrite: vm.overwrite,
-                            translateDescendants: vm.translateDescendants
-                        },
-                        headers: {
-                            "Content-Type": "application/json"
-                        }
-                    });
-                    
-                    if (response.status == 200) {
+                    var response = null;
+
+                    if (vm.nodeId == "-1") {
+                        response = await $http({
+                            method: "POST",
+                            url: "/umbraco/backoffice/Synthscribe/Translation/TranslateAllDictionaries",
+                            data: {
+                                dictionaryId: vm.nodeId,
+                                languageTo: vm.langTo,
+                                overwrite: vm.overwrite,
+                                translateDescendants: vm.translateDescendants
+                            },
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        });
+                    }
+                    else {
+                        response = await $http({
+                            method: "POST",
+                            url: "/umbraco/backoffice/Synthscribe/Translation/TranslateDictionary",
+                            data: {
+                                dictionaryId: vm.nodeId,
+                                languageTo: vm.langTo,
+                                overwrite: vm.overwrite,
+                                translateDescendants: vm.translateDescendants
+                            },
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        });
+                    }
+
+                    if (response?.status == 200) {
                         notificationsService.success("Translation succesfull");
+                        vm.alert = {
+                            alertType: 'success',
+                            message: "Dictionary / dictionaries translated successfully! (Click escape to exit)"
+                        };
+                        vm.translationFailed = false;
                     }
                     else {
                         notificationsService.error("Translation failed");
+                        vm.alert = {
+                            alertType: 'error',
+                            message: "Something went wrong! Try again...!"
+                        };
+                        vm.translationFailed = true;
                     }
 
                     disableLoading();

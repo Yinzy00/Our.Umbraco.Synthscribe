@@ -8,7 +8,7 @@ namespace Our.Umbraco.Synthscribe.Services.interfaces
 {
     public interface ITranslateDictionaryService
     {
-        Task TranslateAllDictionaries();
+        Task TranslateAllDictionaries(string destinationLanguage = null, bool overwrite = false);
         Task TranslateDictionary(int id, string destinationLanguage = null, bool overwrite = false, bool translateDescendants = false);
     }
 }

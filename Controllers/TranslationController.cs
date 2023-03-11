@@ -48,7 +48,18 @@ namespace Our.Umbraco.Synthscribe.Controllers
         [HttpPost]
         public async Task<ActionResult> TranslateDictionary(TranslateDictionaryViewModel vm)
         {
-            await _translateDictionaryService.TranslateDictionary(vm.DictionaryId, !string.IsNullOrEmpty(vm.LanguageTo) ? vm.LanguageTo : null, vm.Overwrite, vm.TranslateDescendants);
+            if(vm.DictionaryId == null)
+                return BadRequest();
+
+            await _translateDictionaryService.TranslateDictionary((int)vm.DictionaryId, !string.IsNullOrEmpty(vm.LanguageTo) ? vm.LanguageTo : null, vm.Overwrite, vm.TranslateDescendants);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> TranslateAllDictionaries(TranslateDictionaryViewModel vm)
+        {
+            await _translateDictionaryService.TranslateAllDictionaries(vm.LanguageTo, vm.Overwrite);
 
             return Ok();
         }

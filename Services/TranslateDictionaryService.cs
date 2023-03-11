@@ -27,9 +27,24 @@ namespace Our.Umbraco.Synthscribe.Services
             defaultLanguage = localizationService.GetAllLanguages().First(l => l.IsDefault);
 
         }
-        public async Task TranslateAllDictionaries()
+        public async Task TranslateAllDictionaries(string destinationLanguage = null, bool overwrite = false)
         {
-            throw new NotImplementedException();
+            IEnumerable<IDictionaryItem> allDictionaries = new List<IDictionaryItem>();
+            allDictionaries = allDictionaries.Concat(_localizationService.GetRootDictionaryItems());
+
+            IEnumerable<IDictionaryItem> descendants = new List<IDictionaryItem>();
+
+            foreach (var di in allDictionaries)
+            {
+                descendants = descendants.Concat(_localizationService.GetDictionaryItemDescendants(di.Key));
+            }
+
+            allDictionaries = allDictionaries.Concat(descendants);
+
+            foreach (var di in allDictionaries)
+            {
+                await TranslateSingleDictionary(di, destinationLanguage, overwrite);
+            }
         }
 
         public async Task TranslateDictionary(int id, string destinationLanguage = null, bool overwrite = false, bool translateDescendants = false)

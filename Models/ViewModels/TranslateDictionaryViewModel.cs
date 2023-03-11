@@ -10,9 +10,9 @@ namespace Our.Umbraco.Synthscribe.Models.ViewModels
     public class TranslateDictionaryViewModel
     {
         [JsonProperty("dictionaryId")]
-        public int DictionaryId { get; set; }
+        public int? DictionaryId { get; set; }
         [JsonProperty("languageTo")]
-        public string LanguageTo { get; set; }
+        public string? LanguageTo { get; set; }
         [JsonProperty("overwrite")]
         public bool Overwrite { get; set; }
         [JsonProperty("translateDescendants")]

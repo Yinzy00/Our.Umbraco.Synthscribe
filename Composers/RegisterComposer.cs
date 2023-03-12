@@ -32,6 +32,7 @@ namespace Our.Umbraco.Synthscribe.Composers
             builder.Services.AddTransient<ITextContentService, TextContentService>();
             builder.Services.AddTransient<ITranslationService, TranslationService>();
             builder.Services.AddTransient<ITranslateDictionaryService, TranslateDictionaryService>();
+            builder.Services.AddTransient<ITranslateContentService, TranslateContentService>();
 
             builder.AddNotificationHandler<MenuRenderingNotification, MenuRenderingNotificationHandler>();
         }

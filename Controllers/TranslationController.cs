@@ -10,18 +10,21 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Cms.Web.Common.Controllers;
+using Umbraco.Extensions;
 
 namespace Our.Umbraco.Synthscribe.Controllers
 {
     [PluginController("Synthscribe")]
-    public class TranslationController: UmbracoAuthorizedApiController
+    public class TranslationController : UmbracoAuthorizedApiController
     {
         private readonly ITranslateDictionaryService _translateDictionaryService;
+        private readonly ITranslateContentService _translateContentService;
         private readonly ILocalizationService _localizationService;
-        public TranslationController(ITranslateDictionaryService translateDictionaryService, ILocalizationService localizationService)
+        public TranslationController(ITranslateDictionaryService translateDictionaryService, ILocalizationService localizationService, ITranslateContentService translateContentService)
         {
             _translateDictionaryService = translateDictionaryService;
             _localizationService = localizationService;
+            _translateContentService = translateContentService;
 
         }
 
@@ -32,7 +35,7 @@ namespace Our.Umbraco.Synthscribe.Controllers
         [HttpGet]
         public async Task<IActionResult> Languages()
         {
-            var languages = _localizationService?.GetAllLanguages()?.Where(l=>!l.IsDefault);
+            var languages = _localizationService?.GetAllLanguages()?.Where(l => !l.IsDefault);
             var defaultLanguage = _localizationService?.GetDefaultLanguageIsoCode();
 
             if (defaultLanguage == null)
@@ -46,22 +49,53 @@ namespace Our.Umbraco.Synthscribe.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> TranslateDictionary(TranslateDictionaryViewModel vm)
+        public async Task<IActionResult> TranslateDictionary(TranslationViewModel vm)
         {
-            if(vm.DictionaryId == null)
-                return BadRequest();
+            if (vm == null || vm.NodeId == null)
+                HandleError();
 
-            await _translateDictionaryService.TranslateDictionary((int)vm.DictionaryId, !string.IsNullOrEmpty(vm.LanguageTo) ? vm.LanguageTo : null, vm.Overwrite, vm.TranslateDescendants);
+            await _translateDictionaryService.TranslateDictionary((int)vm.NodeId, !string.IsNullOrEmpty(vm.LanguageTo) ? vm.LanguageTo : null, vm.Overwrite, vm.TranslateDescendants);
 
             return Ok();
         }
 
         [HttpPost]
-        public async Task<ActionResult> TranslateAllDictionaries(TranslateDictionaryViewModel vm)
+        public async Task<IActionResult> TranslateAllDictionaries(TranslationViewModel vm)
         {
+            if (vm == null)
+                HandleError();
+
             await _translateDictionaryService.TranslateAllDictionaries(vm.LanguageTo, vm.Overwrite);
 
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TranslateContent(TranslationViewModel vm)
+        {
+            if (vm == null || vm.NodeId == null)
+                HandleError();
+
+            await _translateContentService.TranslateContent((int)vm.NodeId, vm.LanguageTo, vm.TranslateDescendants);
+
+            return Ok();
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TranslateAllContent(TranslationViewModel vm)
+        {
+            if (vm == null)
+                HandleError();
+
+            await _translateContentService.TranslateAllContent(vm.LanguageTo, vm.Overwrite);
+
+            return Ok();
+        }
+
+        private IActionResult HandleError()
+        {
+            return BadRequest("Something went wrong!");
         }
 
         //[HttpPost]

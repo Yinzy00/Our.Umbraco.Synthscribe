@@ -14,17 +14,17 @@
                 vm.defaultLanguage = null;
                 vm.langTo = '';
                 vm.nodeId = null;
-                vm.dictionaryKey = null;
+                vm.pageName = null;
                 vm.translateDescendants = false;
                 vm.translationFailed = null;
 
                 //Get Node Id From Menu Actions
                 const initAdditionalData = async () => {
-
+debugger;
                     appState.getMenuState("menuActions")?.forEach(action => {
                         if (action.alias === "translate")
                             vm.nodeId = action.metaData.nodeId;
-                        vm.dictionaryKey = action.metaData.dictionaryKey;
+                            vm.pageName = action.metaData.pageName;
                     });
                 }
 
@@ -56,9 +56,9 @@
                     if (vm.nodeId == "-1") {
                         response = await $http({
                             method: "POST",
-                            url: "/umbraco/backoffice/Synthscribe/Translation/TranslateAllDictionaries",
+                            url: "/umbraco/backoffice/Synthscribe/Translation/TranslateAllContent",
                             data: {
-                                dictionaryId: vm.nodeId,
+                                nodeId: vm.nodeId,
                                 languageTo: vm.langTo,
                                 overwrite: vm.overwrite,
                                 translateDescendants: vm.translateDescendants
@@ -71,9 +71,9 @@
                     else {
                         response = await $http({
                             method: "POST",
-                            url: "/umbraco/backoffice/Synthscribe/Translation/TranslateDictionary",
+                            url: "/umbraco/backoffice/Synthscribe/Translation/TranslateContent",
                             data: {
-                                dictionaryId: vm.nodeId,
+                                nodeId: vm.nodeId,
                                 languageTo: vm.langTo,
                                 overwrite: vm.overwrite,
                                 translateDescendants: vm.translateDescendants

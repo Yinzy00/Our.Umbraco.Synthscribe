@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Our.Umbraco.Synthscribe.Models.ViewModels
 {
-    public class TranslateDictionaryViewModel
+    public class TranslationViewModel
     {
-        [JsonProperty("dictionaryId")]
-        public int? DictionaryId { get; set; }
+        [JsonProperty("nodeId")]
+        public int? NodeId { get; set; }
         [JsonProperty("languageTo")]
-        public string? LanguageTo { get; set; }
+        public string LanguageTo { get; set; }
         [JsonProperty("overwrite")]
         public bool Overwrite { get; set; }
         [JsonProperty("translateDescendants")]

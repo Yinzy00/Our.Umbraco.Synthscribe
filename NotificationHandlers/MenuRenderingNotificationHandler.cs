@@ -15,10 +15,12 @@ namespace Our.Umbraco.Synthscribe.NotificationHandlers
     internal class MenuRenderingNotificationHandler : INotificationHandler<MenuRenderingNotification>
     {
         private readonly ILocalizationService _localizationService;
+        private readonly IContentService _contentService;
 
-        public MenuRenderingNotificationHandler(ILocalizationService localizationService)
+        public MenuRenderingNotificationHandler(ILocalizationService localizationService, IContentService contentService)
         {
             _localizationService = localizationService;
+            _contentService = contentService;
 
         }
 
@@ -26,37 +28,49 @@ namespace Our.Umbraco.Synthscribe.NotificationHandlers
         {
 
             var menuText = $"Translate";
-
-            if (notification.TreeAlias.Equals(Constants.Trees.Dictionary))
+            var title = "";
+            if (int.TryParse(notification.NodeId, out int id))
             {
-                var dictionary = _localizationService.GetDictionaryItemById(Convert.ToInt32(notification.NodeId));
-                var title = "all dictionaries";
-                //Is root tree item
-                if (notification.NodeId == "-1")
-                    menuText = "Translate all dictionaries";
-                else
-                    title = dictionary.ItemKey;
+                if (notification.TreeAlias.Equals(Constants.Trees.Dictionary))
+                {
+                    title = "all dictionaries";
 
-                var menuItem = new MenuItem("translate", menuText);
-                menuItem.AdditionalData.Add("actionView", $"/App_Plugins/Our.Umbraco.Synthscribe/backoffice/translation/dictionary/edit.html");
-                menuItem.Icon = "umb-translation";
-                menuItem.SeparatorBefore = true;
+                    var dictionary = _localizationService.GetDictionaryItemById(id);
+                    //Is root tree item
+                    if (notification.NodeId == "-1")
+                        menuText = "Translate all dictionaries";
+                    else
+                        title = dictionary.ItemKey;
 
-                //Add dictionary id
-                menuItem.AdditionalData.Add("nodeId", notification.NodeId);
+                    var menuItem = new MenuItem("translate", menuText);
+                    menuItem.AdditionalData.Add("actionView", $"/App_Plugins/Our.Umbraco.Synthscribe/backoffice/translation/dictionary/edit.html");
+                    menuItem.Icon = "umb-translation";
+                    menuItem.SeparatorBefore = true;
 
-                //Add dictionary key
-                menuItem.AdditionalData.Add("dictionaryKey", title);
+                    //Add dictionary id
+                    menuItem.AdditionalData.Add("nodeId", notification.NodeId);
 
-                notification.Menu.Items.Add(menuItem);
-            }
-            if (notification.TreeAlias.Equals(Constants.Trees.Content))
-            {
-                var menuItem = new MenuItem("translate", menuText);
-                menuItem.AdditionalData.Add("actionView", "/App_Plugins/Our.Umbraco.Synthscribe/backoffice/translation/content/edit.html");
-                menuItem.Icon = "umb-translation";
-                menuItem.AdditionalData.Add("nodeId", notification.NodeId);
-                notification.Menu.Items.Add(menuItem);
+                    //Add dictionary key
+                    menuItem.AdditionalData.Add("dictionaryKey", title);
+
+                    notification.Menu.Items.Add(menuItem);
+                }
+                if (notification.TreeAlias.Equals(Constants.Trees.Content))
+                {
+                    var contentPage = _contentService.GetById(id);
+
+                    if (notification.NodeId == "-1")
+                        menuText = "Translate all content";
+                    else
+                        title = contentPage.Name;
+
+                    var menuItem = new MenuItem("translate", menuText);
+                    menuItem.AdditionalData.Add("actionView", "/App_Plugins/Our.Umbraco.Synthscribe/backoffice/translation/content/edit.html");
+                    menuItem.Icon = "umb-translation";
+                    menuItem.AdditionalData.Add("nodeId", notification.NodeId);
+                    menuItem.AdditionalData.Add("pageName", title);
+                    notification.Menu.Items.Add(menuItem);
+                }
             }
         }
     }

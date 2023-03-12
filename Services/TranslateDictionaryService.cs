@@ -11,21 +11,16 @@ using Umbraco.Extensions;
 
 namespace Our.Umbraco.Synthscribe.Services
 {
-    internal class TranslateDictionaryService : ITranslateDictionaryService
+    internal class TranslateDictionaryService : TranslateUmbracoService, ITranslateDictionaryService
     {
         private readonly ILocalizationService _localizationService;
         private readonly ITranslationService _translationService;
 
-        private readonly IEnumerable<ILanguage> languages;
-        private readonly ILanguage defaultLanguage;
         public TranslateDictionaryService(ILocalizationService localizationService, ITranslationService translationService)
+            :base(localizationService)
         {
             _localizationService = localizationService;
             _translationService = translationService;
-
-            languages = localizationService.GetAllLanguages().Where(l => !l.IsDefault);
-            defaultLanguage = localizationService.GetAllLanguages().First(l => l.IsDefault);
-
         }
         public async Task TranslateAllDictionaries(string destinationLanguage = null, bool overwrite = false)
         {

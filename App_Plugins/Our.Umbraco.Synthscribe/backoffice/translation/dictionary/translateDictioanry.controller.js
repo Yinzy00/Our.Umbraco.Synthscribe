@@ -58,7 +58,7 @@
                             method: "POST",
                             url: "/umbraco/backoffice/Synthscribe/Translation/TranslateAllDictionaries",
                             data: {
-                                dictionaryId: vm.nodeId,
+                                nodeId: vm.nodeId,
                                 languageTo: vm.langTo,
                                 overwrite: vm.overwrite,
                                 translateDescendants: vm.translateDescendants
@@ -73,7 +73,7 @@
                             method: "POST",
                             url: "/umbraco/backoffice/Synthscribe/Translation/TranslateDictionary",
                             data: {
-                                dictionaryId: vm.nodeId,
+                                nodeId: vm.nodeId,
                                 languageTo: vm.langTo,
                                 overwrite: vm.overwrite,
                                 translateDescendants: vm.translateDescendants

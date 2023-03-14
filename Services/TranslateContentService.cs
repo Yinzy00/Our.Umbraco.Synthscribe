@@ -246,7 +246,7 @@ namespace Our.Umbraco.Synthscribe.Services
 
         private async Task HandleProperty(IProperty property, string source, ILanguage languageTo = null, bool overwrite = false)
         {
-            var currentValue = property.GetValue()?.ToString();
+            var currentValue = property.GetValue(languageTo.IsoCode)?.ToString();
 
             if (currentValue == null ||  currentValue != null && overwrite)
             {

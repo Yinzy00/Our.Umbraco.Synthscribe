@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module("umbraco")
-        .controller("Our.Umbraco.Synthscribe.Backoffice.DictionaryController",
+        .controller("Our.Umbraco.Synthscribe.Backoffice.ContentController",
             function ($scope, $http, notificationsService, appState) {
                 var vm = this;
                 vm.isLoading = false;
@@ -46,7 +46,7 @@ debugger;
                     }
                 }
 
-                //Translate selected dictionary & descendants (if selected)
+                //Translate selected content & descendants (if selected)
                 vm.translate = async () => {
 
                     enableLoading();
@@ -88,7 +88,7 @@ debugger;
                         notificationsService.success("Translation succesfull");
                         vm.alert = {
                             alertType: 'success',
-                            message: "Dictionary / dictionaries translated successfully! (Click escape to exit)"
+                            message: "Content translated successfully! (Click escape to exit)"
                         };
                         vm.translationFailed = false;
                     }

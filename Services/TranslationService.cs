@@ -28,7 +28,7 @@ namespace Our.Umbraco.Synthscribe.Services
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.system.ToString(),
-                        Content = "You're a translator."
+                        Content = "You're a translator. You can only return the translated value."
                     },
                     new ChatGptCompletionMessage()
                     {

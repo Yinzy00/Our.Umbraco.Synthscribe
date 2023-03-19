@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using NUglify;
 using OpenAi.Models.ViewModels;
-using Our.Umbraco.Synthscribe.Services.interfaces;
+using Our.Umbraco.Synthscribe.Features.Translation.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,9 @@ using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
 using static Umbraco.Cms.Core.Constants;
 
-namespace Our.Umbraco.Synthscribe.Services
+namespace Our.Umbraco.Synthscribe.Features.Translation.Content.Service
 {
-    internal class TranslateContentService : TranslateUmbracoService, ITranslateContentService
+    internal class TranslateContentService : UmbracoLanguageBase, ITranslateContentService
     {
         private readonly ILocalizationService _localizationService;
         private readonly IContentService _contentService;
@@ -79,7 +79,7 @@ namespace Our.Umbraco.Synthscribe.Services
 
             if (defaultName != null)
             {
-                if(destinationLanguage == null)
+                if (destinationLanguage == null)
                 {
                     //Translate page name
                     foreach (var language in languages.Where(l => !l.IsDefault))
@@ -95,11 +95,11 @@ namespace Our.Umbraco.Synthscribe.Services
                 }
                 else
                 {
-                    if(destLanguage != null)
+                    if (destLanguage != null)
                     {
                         var currentName = content.GetCultureName(destinationLanguage);
 
-                        if ((!string.IsNullOrEmpty(currentName) && overwrite) || string.IsNullOrEmpty(currentName))
+                        if (!string.IsNullOrEmpty(currentName) && overwrite || string.IsNullOrEmpty(currentName))
                         {
                             var translatedName = await _translationService.Translate(defaultName, defaultLanguage, destLanguage);
                             content.SetCultureName(translatedName, destinationLanguage);
@@ -226,7 +226,7 @@ namespace Our.Umbraco.Synthscribe.Services
                 var source = property.GetValue(defaultLanguage.IsoCode)?.ToString();
                 if (source != null)
                 {
-                    if(languageTo == null)
+                    if (languageTo == null)
                     {
                         //In each language
                         foreach (var language in languages.Where(l => !l.IsDefault))
@@ -248,7 +248,7 @@ namespace Our.Umbraco.Synthscribe.Services
         {
             var currentValue = property.GetValue(languageTo.IsoCode)?.ToString();
 
-            if (currentValue == null ||  currentValue != null && overwrite)
+            if (currentValue == null || currentValue != null && overwrite)
             {
                 string translatedValue = null;
                 //Check propertyeditor & handle translation

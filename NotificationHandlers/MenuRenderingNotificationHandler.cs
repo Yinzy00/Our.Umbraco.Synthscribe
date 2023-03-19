@@ -71,6 +71,18 @@ namespace Our.Umbraco.Synthscribe.NotificationHandlers
                     menuItem.AdditionalData.Add("pageName", title);
                     notification.Menu.Items.Add(menuItem);
                 }
+                if (notification.TreeAlias.Equals(Constants.Trees.DocumentTypes))
+                {
+                    if(notification.NodeId == "-1")
+                    {
+                        menuText = "Quick create";
+                        var menuItem = new MenuItem("quickcreate", menuText);
+                        menuItem.AdditionalData.Add("actionView", "/App_Plugins/Our.Umbraco.Synthscribe/backoffice/settings/doctypes/edit.html");
+                        menuItem.Icon = "icon-page-add";
+                        menuItem.AdditionalData.Add("title", "Quick create a document type using.");
+                        notification.Menu.Items.Add(menuItem);
+                    }
+                }
             }
         }
     }

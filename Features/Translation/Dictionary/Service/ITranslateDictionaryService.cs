@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Our.Umbraco.Synthscribe.Services.interfaces
+namespace Our.Umbraco.Synthscribe.Features.Translation.Dictionary.Service
 {
     public interface ITranslateDictionaryService
     {

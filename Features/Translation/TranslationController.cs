@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Our.Umbraco.Synthscribe.Features.Translation.Content.Service;
+using Our.Umbraco.Synthscribe.Features.Translation.Dictionary.Service;
 using Our.Umbraco.Synthscribe.Models.ViewModels;
-using Our.Umbraco.Synthscribe.Services.interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Cms.Web.Common.Controllers;
 using Umbraco.Extensions;
 
-namespace Our.Umbraco.Synthscribe.Controllers
+namespace Our.Umbraco.Synthscribe.Features.Translation
 {
     [PluginController("Synthscribe")]
     public class TranslationController : UmbracoAuthorizedApiController

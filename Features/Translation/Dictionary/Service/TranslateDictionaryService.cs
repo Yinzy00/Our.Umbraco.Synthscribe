@@ -1,5 +1,5 @@
 ﻿using NUglify.Helpers;
-using Our.Umbraco.Synthscribe.Services.interfaces;
+using Our.Umbraco.Synthscribe.Features.Translation.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +9,15 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Extensions;
 
-namespace Our.Umbraco.Synthscribe.Services
+namespace Our.Umbraco.Synthscribe.Features.Translation.Dictionary.Service
 {
-    internal class TranslateDictionaryService : TranslateUmbracoService, ITranslateDictionaryService
+    internal class TranslateDictionaryService : UmbracoLanguageBase, ITranslateDictionaryService
     {
         private readonly ILocalizationService _localizationService;
         private readonly ITranslationService _translationService;
 
         public TranslateDictionaryService(ILocalizationService localizationService, ITranslationService translationService)
-            :base(localizationService)
+            : base(localizationService)
         {
             _localizationService = localizationService;
             _translationService = translationService;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Our.Umbraco.Synthscribe.Features.TextGeneration.Service;
 using Our.Umbraco.Synthscribe.Models.ViewModels;
-using Our.Umbraco.Synthscribe.Services.interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 
-namespace Our.Umbraco.Synthscribe.Controllers
+namespace Our.Umbraco.Synthscribe.Features.TextGeneration
 {
     [PluginController("Synthscribe")]
     public class TextContentController : UmbracoAuthorizedApiController
@@ -23,9 +23,19 @@ namespace Our.Umbraco.Synthscribe.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenerateText([FromBody]GenerateTextViewModel vm)
+        public async Task<IActionResult> GenerateText([FromBody] GenerateTextViewModel vm)
         {
-            return Ok(await _textContentService.GetText(vm.Context));
+            var text = await _textContentService.GetText(vm.Context);
+
+            if (text.StartsWith('"') && text.EndsWith('"'))
+            {
+                var end = text.Length - 2;
+                if (end > 1)
+                {
+                    text = text.Substring(1, end);
+                }
+            }
+            return Ok(text);
         }
 
     }

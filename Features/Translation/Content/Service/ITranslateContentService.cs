@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Models;
 
-namespace Our.Umbraco.Synthscribe.Services.interfaces
+namespace Our.Umbraco.Synthscribe.Features.Translation.Content.Service
 {
     public interface ITranslateContentService
     {

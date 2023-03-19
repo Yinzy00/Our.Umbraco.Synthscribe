@@ -1,25 +1,20 @@
 ﻿using Our.Umbraco.Synthscribe.OpenAi.Models;
 using Our.Umbraco.Synthscribe.OpenAi.Services.Interfaces;
-using Our.Umbraco.Synthscribe.Services.interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Cms.Core.Models;
 
-namespace Our.Umbraco.Synthscribe.Services
+namespace Our.Umbraco.Synthscribe.Features.Translation.Service
 {
-    internal class TextContentService : ITextContentService
+    internal class TranslationService : ITranslationService
     {
-
         private readonly IChatGptService _chatGptService;
 
-        public TextContentService(IChatGptService chatGptService)
+        public TranslationService(IChatGptService chatGptService)
         {
             _chatGptService = chatGptService;
         }
-
-        public async Task<string> GetText(string context)
+        public async Task<string> Translate(string text, ILanguage sourceLanguage, ILanguage targetLanguage)
         {
             var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
             {
@@ -28,17 +23,17 @@ namespace Our.Umbraco.Synthscribe.Services
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.system.ToString(),
-                        Content = "You're a text generator for websites."
+                        Content = "You're a translator. You can only return the translated value."
                     },
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.user.ToString(),
-                        Content = $"{context}, Return only the requested text. Return text in the language of the message. And return in 1 answer, no multiple option."
+                        Content = $"Translate \"{text}\" from {sourceLanguage.IsoCode} to {targetLanguage.IsoCode} and don't touch html tag names and only return the translated value and remove the quotes arround the text."
                     }
                 }
             });
 
-                return response;
+            return response;
         }
     }
 }

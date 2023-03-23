@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="App_Plugins\Our.Umbraco.Synthscribe\backoffice\synthscribe.css" />
     <None Remove="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\content\edit.html" />
     <None Remove="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\content\translateContent.controller.js" />
     <None Remove="App_Plugins\Our.Umbraco.Synthscribe\backoffice\translation\dictionary\edit.html" />

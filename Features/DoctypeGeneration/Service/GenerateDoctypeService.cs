@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Models;
 using Our.Umbraco.Synthscribe.General.Models.Interrfaces;
 using Our.Umbraco.Synthscribe.OpenAi.Models;
@@ -23,6 +24,7 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
 {
     internal class GenerateDoctypeService : IGenerateDoctypeService
     {
+        private readonly ILogger<IGenerateDoctypeService> _logger;
         private readonly IContentTypeService _contentTypeService;
         private readonly IDataTypeService _dataTypeService;
         private readonly IShortStringHelper _shortStringHelper;
@@ -33,13 +35,15 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
             IDataTypeService dataTypeService, 
             IShortStringHelper shortStringHelper, 
             IChatGptService chatGptService, 
-            IConfigurationEditorJsonSerializer configurationEditorJsonSerializer)
+            IConfigurationEditorJsonSerializer configurationEditorJsonSerializer,
+            ILogger<IGenerateDoctypeService> logger)
         {
             _contentTypeService = contentTypeService;
             _dataTypeService = dataTypeService;
             _shortStringHelper = shortStringHelper;
             _chatGptService = chatGptService;
             _configurationEditorJsonSerializer = configurationEditorJsonSerializer;
+            _logger = logger;
         }
 
         public async Task<IResponseModel> GenerateDoctype(string context)
@@ -47,7 +51,7 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
             try
             {
                 //Handle context data using ai
-                GenerateDoctypeModel model = await HandleContext(context);
+                DoctypeViewModel model = await HandleContext(context);
 
                 //Create doctype
                 var contentType = await CreateDoctype(model.Name, model.Icon);
@@ -68,27 +72,31 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
 
         }
 
-        private async Task<GenerateDoctypeModel> HandleContext(string context)
+        private async Task<DoctypeViewModel> HandleContext(string context)
         {
-            return JsonConvert.DeserializeObject<GenerateDoctypeModel>("{\"Name\":\"HomePage\",\"Icon\":\"icon-home\",\"Properties\":[{\"DataTypeAlias\":\"Textstring\",\"Name\":\"Title\",\"Description\":\"The title of the home page.\"},{\"DataTypeAlias\":\"Textstring\",\"Name\":\"Intro\",\"Description\":\"The introduction text of the home page.\"},{\"DataTypeAlias\":\"Contentstring\",\"Name\":\"BlockList\",\"Description\":\"A list of content blocks on the home page.\"},{\"DataTypeAlias\":\"Textstring\",\"Name\":\"FooterText\",\"Description\":\"The footer text of the home page.\"}]}");
-            //var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
-            //{
-            //    Messages = new List<ChatGptCompletionMessage>()
-            //    {
-            //        new ChatGptCompletionMessage()
-            //        {
-            //            Role = ChatGptRoles.system.ToString(),
-            //            Content = "Act as a Umbraco tool that converts human language text into json objects. Return only the main response. Remove pre-text and post-text."
-            //        },
-            //        new ChatGptCompletionMessage()
-            //        {
-            //            Role = ChatGptRoles.user.ToString(),
-            //            Content = $"Generate a json object in format [{"Icon":"string (Umbraco icon alias)","Properties":[{"DataTypeAlias":"string","Name":"string","Description":"string"}],"Name":"string"}] based on [{context}], add relevant icon, names and descriptions into the properties."
-            //        }
-            //    }
-            //});
+            //return JsonConvert.DeserializeObject<GenerateDoctypeModel>("{\"Name\":\"HomePage\",\"Icon\":\"icon-home\",\"Properties\":[{\"DataTypeAlias\":\"Textstring\",\"Name\":\"Title\",\"Description\":\"The title of the home page.\"},{\"DataTypeAlias\":\"Textstring\",\"Name\":\"Intro\",\"Description\":\"The introduction text of the home page.\"},{\"DataTypeAlias\":\"Contentstring\",\"Name\":\"BlockList\",\"Description\":\"A list of content blocks on the home page.\"},{\"DataTypeAlias\":\"Textstring\",\"Name\":\"FooterText\",\"Description\":\"The footer text of the home page.\"}]}");
+            var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
+            {
+                Messages = new List<ChatGptCompletionMessage>()
+                {
+                    new ChatGptCompletionMessage()
+                    {
+                        Role = ChatGptRoles.system.ToString(),
+                        Content = "Act as a Umbraco tool that converts human language text into json objects. [Return only the main response. Remove pre-text and post-text]"
+                    },
+                    new ChatGptCompletionMessage()
+                    {
+                        Role = ChatGptRoles.user.ToString(),
+                        Content = $"[Return only the main response. Remove pre-text and post-text] Generate a json object in format [{{\"Icon\":\"string (Umbraco icon alias)\",\"Properties\":[{{\"DataTypeAlias\":\"string\",\"Name\":\"string\",\"Description\":\"string\"}}],\"Name\":\"string\"}}] based on [{context}], add relevant icon (if none found use icon-document), names and descriptions into the properties."
+                    }
+                }
+            });
 
-            return new GenerateDoctypeModel();
+            _logger.LogInformation($"Generate doctype: {response}");
+
+            var vm = JsonConvert.DeserializeObject<List<DoctypeViewModel>>(response);
+
+            return vm.FirstOrDefault();
         }
         private async Task<ContentType> CreateDoctype(string name, string icon = "icon-document", bool isElementType = false)
         {
@@ -154,7 +162,7 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
             //    message = exception.Message;
             //}
         }
-        private async Task<ContentType> HandleProperties(ContentType contentType, GenerateDoctypeModel contextModel)
+        private async Task<ContentType> HandleProperties(ContentType contentType, DoctypeViewModel contextModel)
         {
             var empty = _dataTypeService.GetDataType("Synthscribe.Empty");
             if(empty == null)

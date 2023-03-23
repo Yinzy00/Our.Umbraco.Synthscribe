@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Models;
 using Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service;
 using Our.Umbraco.Synthscribe.General.Models.Interrfaces;
 using System;
@@ -23,9 +24,9 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenerateDoctype()
+        public async Task<IActionResult> GenerateDoctype([FromBody] GenerateDoctypeViewModel vm)
         {
-            var response = await _generateDoctypeService.GenerateDoctype("");
+            var response = await _generateDoctypeService.GenerateDoctype(vm.Context);
             if(response.Succes)
                 return Ok(response);
 

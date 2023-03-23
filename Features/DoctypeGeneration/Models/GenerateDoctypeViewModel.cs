@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Models
 {
-    internal class GenerateProptypeModel: GenerateTypeBaseModel
+    public class GenerateDoctypeViewModel
     {
-        public string DataTypeAlias { get; set; }
-        public string Description { get; set; }
+        public string Context { get; set; }
     }
 }

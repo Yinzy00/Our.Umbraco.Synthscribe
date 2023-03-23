@@ -8,7 +8,7 @@ using Umbraco.Extensions;
 
 namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Models
 {
-    internal class GenerateTypeBaseModel
+    internal class GenerateTypeBaseViewModel
     {
         private string name;
         public string Name { get => name ?? "NameWasEmpty"; set => name = value; }

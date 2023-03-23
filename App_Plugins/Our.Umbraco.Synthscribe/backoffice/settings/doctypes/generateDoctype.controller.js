@@ -30,35 +30,40 @@
 
                         var response = null;
 
-                        response = await $http({
-                            method: "POST",
-                            url: "/umbraco/backoffice/Synthscribe/GenerateDoctype/GenerateDoctype",
-                            data: {
-                                context: vm.context
-                            },
-                            headers: {
-                                "Content-Type": "application/json"
+                        //Generate doctype api
+                        try {
+                            response = await $http({
+                                method: "POST",
+                                url: "/umbraco/backoffice/Synthscribe/GenerateDoctype/GenerateDoctype",
+                                data: {
+                                    context: vm.context
+                                },
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            });
+
+                            var message = response.data.message;
+
+                            if (response?.status == 200) {
+
+                                //Doctype has been created
+                                notify("success", message);
+
+                                vm.generationFailed = false;
                             }
-                        });
+                            else {
 
-                        var message = response.data.message;
+                                //Creating doctype failed
+                                notify("warning", message);
 
-                        if (response?.status == 200) {
+                                vm.generationFailed = true;
+                            }
 
-                            vm.alert = {
-                                alertType: 'success',
-                                message: message
-                            };
-                            vm.generationFailed = false;
-                        }
-                        else {
+                        } catch (e) {
 
-                            vm.alert = {
-                                alertType: 'error',
-                                message: message
-                            };
-
-                            vm.generationFailed = true;
+                            //Creating doctype failed
+                            notify("error", e.data.message);
                         }
 
                         disableLoading();
@@ -66,7 +71,8 @@
                         $scope.$apply();
                     }
                     else {
-                        notificationsService.error("Context is empty!");
+
+                        notify("warning", "Context is empty!");
                     }
                 }
 
@@ -76,6 +82,14 @@
 
                 const disableLoading = () => {
                     vm.isLoading = false;
+                }
+
+                const notify = (type, message) => {
+
+                    vm.alert = {
+                        alertType: type,
+                        message: message
+                    };
                 }
 
                 const init = async () => {

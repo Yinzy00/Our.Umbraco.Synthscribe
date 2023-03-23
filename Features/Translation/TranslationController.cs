@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Our.Umbraco.Synthscribe.Features.Translation.Content.Service;
 using Our.Umbraco.Synthscribe.Features.Translation.Dictionary.Service;
+using Our.Umbraco.Synthscribe.Features.Translation.Models;
 using Our.Umbraco.Synthscribe.Models.ViewModels;
 using System;
 using System.Collections.Generic;

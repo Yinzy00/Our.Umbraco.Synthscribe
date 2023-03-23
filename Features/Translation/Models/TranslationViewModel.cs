@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Our.Umbraco.Synthscribe.Models.ViewModels
+namespace Our.Umbraco.Synthscribe.Features.Translation.Models
 {
     public class TranslationViewModel
     {

@@ -28,7 +28,7 @@ namespace Our.Umbraco.Synthscribe.Features.Translation.Service
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.user.ToString(),
-                        Content = $"Translate \"{text}\" from {sourceLanguage.IsoCode} to {targetLanguage.IsoCode} and don't touch html tag names and only return the translated value and remove the quotes arround the text."
+                        Content = $"[Return only the main response. Remove pre-text and post-text] Translate \"{text}\" from {sourceLanguage.IsoCode} to {targetLanguage.IsoCode} and don't touch html tag names and only return the translated value and remove the quotes arround the text."
                     }
                 }
             });

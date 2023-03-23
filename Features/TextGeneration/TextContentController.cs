@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Our.Umbraco.Synthscribe.Features.TextGeneration.Model;
 using Our.Umbraco.Synthscribe.Features.TextGeneration.Service;
-using Our.Umbraco.Synthscribe.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

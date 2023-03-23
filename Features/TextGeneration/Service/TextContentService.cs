@@ -31,11 +31,11 @@ namespace Our.Umbraco.Synthscribe.Features.TextGeneration.Service
                         Content = "You're a text generator for websites."
                     },
                     //Conversation context
-                    new ChatGptCompletionMessage()
-                    {
-                        Role = ChatGptRoles.user.ToString(),
-                        Content = $"Write me a title for my website about dogs"
-                    },
+                    //new ChatGptCompletionMessage()
+                    //{
+                    //    Role = ChatGptRoles.user.ToString(),
+                    //    Content = $"Write me a title for my website about dogs"
+                    //},
                     //new ChatGptCompletionMessage()
                     //{
                     //    Role = ChatGptRoles.assistant.ToString(),
@@ -65,7 +65,7 @@ namespace Our.Umbraco.Synthscribe.Features.TextGeneration.Service
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.user.ToString(),
-                        Content = $"{context}, asnwer like in your last messages."
+                        Content = $"[Return only the main response. Remove pre-text and post-text] {context}"
                     }
                 }
             });

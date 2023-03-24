@@ -61,8 +61,10 @@ namespace Our.Umbraco.Synthscribe.NotificationHandlers
 
                     if (notification.NodeId == "-1")
                         menuText = "Translate all content";
-                    else
+                    else if (contentPage != null)
                         title = contentPage.Name;
+                    else
+                        return;
 
                     var menuItem = new MenuItem("translate", menuText);
                     menuItem.AdditionalData.Add("actionView", "/App_Plugins/Our.Umbraco.Synthscribe/backoffice/translation/content/edit.html");

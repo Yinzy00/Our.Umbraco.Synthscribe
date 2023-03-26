@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,8 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Models
 {
     internal class GenerateProptypeViewModel: GenerateTypeBaseViewModel
     {
-        public string DataTypeAlias { get; set; }
+        [JsonProperty("propertyEditorAlias")]
+        public string PropertyEditorAlias { get; set; } = null;
         public string Description { get; set; }
     }
 }

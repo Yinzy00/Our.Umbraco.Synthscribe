@@ -11,6 +11,8 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Models
     {
         [JsonProperty("propertyEditorAlias")]
         public string PropertyEditorAlias { get; set; } = null;
+        [JsonProperty("propertyTypeInfo")]
+        public string PropertyTypeInfo { get; set; }
         public string Description { get; set; }
     }
 }

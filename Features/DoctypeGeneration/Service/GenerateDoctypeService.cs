@@ -19,6 +19,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Services.Implement;
 using Umbraco.Cms.Core.Strings;
 using Umbraco.Extensions;
+using static Umbraco.Cms.Core.Constants;
 using static Umbraco.Cms.Core.PropertyEditors.ImageCropperConfiguration;
 
 namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
@@ -113,6 +114,7 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
 
         private async Task<string> HandleIcon(string context)
         {
+
             var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
             {
                 Messages = new List<ChatGptCompletionMessage>()
@@ -164,6 +166,13 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
 
         private async Task<string> HandlePropertyEditor(GenerateProptypeViewModel property)
         {
+            //TODO: Maybe put this next line on startup & put data in globally accessible list.
+            var existingPropertyEditorAliases = (typeof(PropertyEditors.Aliases).GetFields().Select(field => field?.GetValue(null)?.ToString())).ToList();
+
+            string editorsString = "";
+            if (existingPropertyEditorAliases.Any())
+                editorsString = string.Join(", ", existingPropertyEditorAliases);
+
             var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
             {
                 Messages = new List<ChatGptCompletionMessage>()
@@ -171,12 +180,12 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.system.ToString(),
-                        Content = "Act as a Umbraco tool that returns best fitting property editor aliasbased on property name & description. [Return only the main response. Remove pre-text and post-text]"
+                        Content = "Act as a Umbraco tool that returns best fitting property editor alias based on property name & description. [Return only the main response. Remove pre-text and post-text]"
                     },
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.user.ToString(),
-                        Content = $"[Return only the main response. Remove pre-text and post-text] Generate a json object in format \"[{{\"propertyEditorAlias\":\"Umbraco Property Editor Alias\"}}]\" based on property name \"{property.Name}\", description \"{property.Description}\" and extra information about the type \"{property.PropertyTypeInfo}\". List of possible aliasses: [\"Umbraco.BlockList\",\"Umbraco.BlockGrid\",\"Umbraco.CheckBoxList\",\"Umbraco.ColorPicker\",\"Umbraco.ColorPicker.EyeDropper\",\"Umbraco.ContentPicker\",\"Umbraco.DateTime\",\"Umbraco.DropDown.Flexible\",\"Umbraco.Grid\",\"Umbraco.ImageCropper\",\"Umbraco.Integer\",\"Umbraco.Decimal\",\"Umbraco.ListView\",\"Umbraco.MediaPicker\",\"Umbraco.MediaPicker3\",\"Umbraco.MultipleMediaPicker\",\"Umbraco.MemberPicker\",\"Umbraco.MemberGroupPicker\",\"Umbraco.MultiNodeTreePicker\",\"Umbraco.MultipleTextstring\",\"Umbraco.Label\",\"Umbraco.PickerRelations\",\"Umbraco.RadioButtonList\",\"Umbraco.Slider\",\"Umbraco.Tags\",\"Umbraco.TextBox\",\"Umbraco.TextArea\",\"Umbraco.TinyMCE\",\"Umbraco.TrueFalse\",\"Umbraco.MarkdownEditor\",\"Umbraco.UserPicker\",\"Umbraco.UploadField\",\"Umbraco.EmailAddress\",\"Umbraco.NestedContent\",\"Umbraco.MultiUrlPicker\"] [Only return the json object!]"
+                        Content = $"[Return only the main response. Remove pre-text and post-text] Generate a json object in format \"[{{\"propertyEditorAlias\":\"Umbraco Property Editor Alias\"}}]\" based on property name \"{property.Name}\", description \"{property.Description}\" and extra information about the type \"{property.PropertyTypeInfo}\". List of possible aliasses: [{editorsString}] [Only return the json object!]"
                     }
                 }
             }); 
@@ -190,9 +199,10 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
             if (vm == null || string.IsNullOrEmpty(vm.PropertyEditorAlias))
                 return null;
 
-            //Add check if alias exists => Add array to constants? || use Umbraco constants "Umbraco.Cms.Core.PropertyEditors" => else return null.
-
-            return vm.PropertyEditorAlias;
+            if (existingPropertyEditorAliases.FirstOrDefault(x => x == vm.PropertyEditorAlias)!=null)
+                return vm.PropertyEditorAlias;
+            else
+                return "Umbraco.TextBox";
 
         }
 
@@ -284,14 +294,8 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
                 if (prop == null)
                     continue;
 
-                //Get property propertyEditorAlias
-                //var propertyEditorAlias = _dataTypeService.GetDataType(prop.PropertyEditorAlias);
-
-                //if (propertyEditorAlias == null)
-                //    propertyEditorAlias = empty;
-
                 //Get relevant data type
-                var relevantDataType = await GetRelevantDataTypeName(prop);
+                var relevantDataType = await GetRelevantDataType(prop);
 
                 if (relevantDataType == null)
                     relevantDataType = empty;
@@ -301,6 +305,10 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
                 propType.Name = prop.Name;
                 propType.Alias = GetAlias(prop.Name);
 
+                //Reserved name handl..
+                if (propType.Alias == "name")
+                    propType.Alias = $"{GetAlias(contextModel.Name)}Name";
+
                 //Add propertyType to contentType
                 contentType.AddPropertyType(propType);
             }
@@ -308,7 +316,7 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
             return contentType;
         }
 
-        private async Task<IDataType> GetRelevantDataTypeName(GenerateProptypeViewModel vm)
+        private async Task<IDataType> GetRelevantDataType(GenerateProptypeViewModel vm)
         {
             //Get property propertyEditorAlias
             var selectedDataTypes = _dataTypeService.GetByEditorAlias(vm.PropertyEditorAlias);
@@ -318,7 +326,7 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
             if (selectedDataTypes == null)
                 return null;
 
-            //Check if names length > 0
+            ////Check if names length > 0
 
             var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
             {
@@ -327,12 +335,12 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.system.ToString(),
-                        Content = "Act as a Umbraco tool that returns best fitting DataType based on property name, description & propertyTypeAlias [Return only the main response. Remove pre-text and post-text]"
+                        Content = "Act as a Umbraco tool that returns best fitting DataType name based on property name, description & propertyTypeAlias, choose from list of existing names [Return only the main response. Remove pre-text and post-text]"
                     },
                     new ChatGptCompletionMessage()
                     {
                         Role = ChatGptRoles.user.ToString(),
-                        Content = $"[Return only the main response. Remove pre-text and post-text] Generate a json object in format {{\"dataTypeName\":\"string, data type name from the list of supported types\"}}, here is a list of existing data types: {JsonConvert.SerializeObject(names)}, if non is relevant use null. [Only return the json object!]"
+                        Content = $"[Return only the main response. Remove pre-text and post-text] Generate a json object in format {{\"dataTypeName\":\"string, data type name from the list of supported types\"}} based on this data: [name: {vm.Name}, description: {vm.Description}], here is a list of existing data types: {string.Join(", ", names)}, if non is relevant suggest a relevant name. [Only return the json object!]"
                     }
                 }
             });
@@ -341,11 +349,20 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
 
             IDataType relevantDataType = null;
 
-            if(obj.DataTypeName == null)
+            if (!string.IsNullOrEmpty(obj.DataTypeName) && names.Contains(obj.DataTypeName))
+            {
+                relevantDataType = _dataTypeService.GetDataType(obj.DataTypeName);
+            }
+
+            if (relevantDataType == null)
             {
                 //Create new
-                var dtName = $"Synthscribe.{vm.Name}";
+                var dtName = $"Synthscribe.{obj.DataTypeName??vm.Name}";
+
+                //Check if doest exist
                 relevantDataType = _dataTypeService.GetDataType(dtName);
+
+                //If not, create
                 if (relevantDataType == null)
                 {
                     var editorToUse = _dataTypeService?.GetByEditorAlias(vm.PropertyEditorAlias)?.FirstOrDefault()?.Editor;
@@ -356,12 +373,8 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
 
                     _dataTypeService.Save(newDt);
 
-                    relevantDataType = _dataTypeService.GetDataType("Synthscribe.Empty");
+                    relevantDataType = _dataTypeService.GetDataType(dtName);
                 }
-            }
-            else
-            {
-                relevantDataType = _dataTypeService.GetDataType(obj.DataTypeName);
             }
 
             return relevantDataType;

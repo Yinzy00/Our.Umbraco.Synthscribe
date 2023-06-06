@@ -8,6 +8,9 @@ namespace Our.Umbraco.Synthscribe
 {
     internal static class SynthscribeConstants
     {
+        /// <summary>
+        /// Umbraco.Cms.Core.Constants.Icons doesnt contain all icon aliases so I made this list.
+        /// </summary>
         public readonly static string[] UmbracoIconNames = new string[] {
     "icon-zoom-out",
     "icon-truck",

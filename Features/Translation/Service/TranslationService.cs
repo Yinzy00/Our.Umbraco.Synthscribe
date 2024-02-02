@@ -18,14 +18,14 @@ namespace Our.Umbraco.Synthscribe.Features.Translation.Service
         {
             var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
             {
-                Messages = new List<ChatGptCompletionMessage>()
+                Messages = new()
                 {
-                    new ChatGptCompletionMessage()
+                    new ChatGptCompletionTextMessage()
                     {
                         Role = ChatGptRoles.system.ToString(),
                         Content = "You're a translator. You can only return the translated value."
                     },
-                    new ChatGptCompletionMessage()
+                    new ChatGptCompletionTextMessage()
                     {
                         Role = ChatGptRoles.user.ToString(),
                         Content = $"[Return only the main response. Remove pre-text and post-text] Translate \"{text}\" from {sourceLanguage.IsoCode} to {targetLanguage.IsoCode} and don't touch html tag names and only return the translated value and remove the quotes arround the text."

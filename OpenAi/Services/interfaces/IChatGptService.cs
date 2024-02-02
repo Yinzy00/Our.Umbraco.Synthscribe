@@ -9,8 +9,6 @@ namespace Our.Umbraco.Synthscribe.OpenAi.Services.Interfaces
 {
     internal interface IChatGptService
     {
-
         Task<string> CreateCompletion(ChatGptCompletion completion);
-
     }
 }

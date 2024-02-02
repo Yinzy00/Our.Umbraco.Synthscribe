@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Models
 {
-    internal class DoctypeViewModel: GenerateTypeBaseViewModel
+    internal class DoctypeIconViewModel
     {
-        public string Icon { get; set; } = null;
-        public List<GenerateProptypeViewModel> Properties { get; set; } = new List<GenerateProptypeViewModel>();
+        [JsonProperty("icon")]
+        public string Icon { get; set; }
     }
 }

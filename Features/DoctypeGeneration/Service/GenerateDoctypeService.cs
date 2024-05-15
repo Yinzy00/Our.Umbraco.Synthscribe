@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Pkcs;
 using Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Models;
 using Our.Umbraco.Synthscribe.General.Models.Interrfaces;
 using Our.Umbraco.Synthscribe.OpenAi.Models;
@@ -8,19 +7,14 @@ using Our.Umbraco.Synthscribe.OpenAi.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models;
-using Umbraco.Cms.Core.Persistence.Repositories;
-using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Services.Implement;
 using Umbraco.Cms.Core.Strings;
 using Umbraco.Extensions;
 using static Umbraco.Cms.Core.Constants;
-using static Umbraco.Cms.Core.PropertyEditors.ImageCropperConfiguration;
 
 namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
 {
@@ -79,8 +73,8 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
             //return JsonConvert.DeserializeObject<GenerateDoctypeModel>("{\"Name\":\"HomePage\",\"Icon\":\"icon-home\",\"Properties\":[{\"DataTypeAlias\":\"Textstring\",\"Name\":\"Title\",\"Description\":\"The title of the home page.\"},{\"DataTypeAlias\":\"Textstring\",\"Name\":\"Intro\",\"Description\":\"The introduction text of the home page.\"},{\"DataTypeAlias\":\"Contentstring\",\"Name\":\"BlockList\",\"Description\":\"A list of content blocks on the home page.\"},{\"DataTypeAlias\":\"Textstring\",\"Name\":\"FooterText\",\"Description\":\"The footer text of the home page.\"}]}");
             var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
             {
-                Messages = new()
-                {
+                Messages =
+                [
                     new ChatGptCompletionTextMessage()
                     {
                         Role = ChatGptRoles.system.ToString(),
@@ -91,7 +85,7 @@ namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Service
                         Role = ChatGptRoles.user.ToString(),
                         Content = $"[Return only the main response. Remove pre-text and post-text] Generate a json object in format [{{\"Name\":\"string\",\"Properties\":[{{\"Name\":\"string\",\"Description\":\"string\",\"propertyTypeInfo\":\"string, info to choose wich property type to use for the property\"}}]}}] based on [{context}], add relevant names and descriptions into the properties."
                     }
-                }
+                ]
             });
 
             _logger.LogInformation($"Generate doctype: {response}");

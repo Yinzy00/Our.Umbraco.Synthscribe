@@ -23,9 +23,10 @@ internal class ImageMessageJsonConverter : JsonConverter
 
         var msgObj = new
         {
+            role = msg.Role,
             content = msg.Content.Select(x => x.GetValue())
         };
-
-        writer.WriteValue(JsonConvert.SerializeObject(msgObj));
+        var a = JsonConvert.SerializeObject(msgObj);
+        writer.WriteRaw($",{a}");
     }
 }

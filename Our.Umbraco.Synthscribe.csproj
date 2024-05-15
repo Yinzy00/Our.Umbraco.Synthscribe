@@ -64,6 +64,5 @@
 
   <ItemGroup>
     <Folder Include="Features\HtmlGeneration\Services\" />
-    <Folder Include="Features\ModelGeneration\" />
   </ItemGroup>
 </Project>

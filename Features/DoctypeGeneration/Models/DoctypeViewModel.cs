@@ -1,15 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Our.Umbraco.Synthscribe.Features.DoctypeGeneration.Models
 {
     internal class DoctypeViewModel: GenerateTypeBaseViewModel
     {
         public string Icon { get; set; } = null;
-        public List<GenerateProptypeViewModel> Properties { get; set; } = new List<GenerateProptypeViewModel>();
+        public List<GenerateProptypeViewModel> Properties { get; set; } = [];
     }
 }

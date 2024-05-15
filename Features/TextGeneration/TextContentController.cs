@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Our.Umbraco.Synthscribe.Features.TextGeneration.Model;
 using Our.Umbraco.Synthscribe.Features.TextGeneration.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
@@ -12,7 +8,7 @@ using Umbraco.Cms.Web.Common.Attributes;
 namespace Our.Umbraco.Synthscribe.Features.TextGeneration
 {
     [PluginController("Synthscribe")]
-    public class TextContentController : UmbracoAuthorizedApiController
+    public sealed class TextContentController : UmbracoAuthorizedApiController
     {
 
         private readonly ITextContentService _textContentService;

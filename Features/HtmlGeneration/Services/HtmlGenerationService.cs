@@ -1,8 +1,6 @@
 using Our.Umbraco.Synthscribe.OpenAi.Models;
 using Our.Umbraco.Synthscribe.OpenAi.Services.Interfaces;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Our.Umbraco.Synthscribe.Features.HtmlGeneration.Services;
 
@@ -17,12 +15,12 @@ internal sealed class HtmlGenerationService : IHtmlGenerationService
     public async Task<string> GenerateHtml(string base64)
     {
         if (string.IsNullOrEmpty(base64))
-            return string.Empty;
+            return "Base64 is null or empty";
 
-        var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
+        var response = await _chatGptService.CreateCompletion(new ChatGptCompletion("gpt-4-vision-preview")
         {
-            Messages = new()
-                {
+            Messages =
+                [
                     new ChatGptCompletionTextMessage()
                     {
                         Role = ChatGptRoles.system.ToString(),
@@ -45,7 +43,31 @@ internal sealed class HtmlGenerationService : IHtmlGenerationService
                             }
                         }
                     }
+                ]
+        });
+
+        return response;
+    }
+
+    public async Task<string> GenerateRazor(string html, string viewModel)
+    {
+        if (string.IsNullOrEmpty(html) || string.IsNullOrEmpty(viewModel))
+            return "Html or viewmodel is null or empty";
+
+        var response = await _chatGptService.CreateCompletion(new ChatGptCompletion()
+        {
+            Messages = [
+                new ChatGptCompletionTextMessage()
+                {
+                    Role = ChatGptRoles.system.ToString(),
+                    Content = "You are a tool that generates razor code based on html and a viewmodel. \nReplace all text with properties from the viewModel.\nAlso add a using statement for the viewmodel using the namespace of the viewmodel.\nOnly return the viewmodel, don't ever return any plain text."
+                },
+                new ChatGptCompletionTextMessage()
+                {
+                    Role = ChatGptRoles.user.ToString(),
+                    Content = $"Give me razor code based on this html: {html} ; and this viewModel: {viewModel} ;"
                 }
+            ]
         });
 
         return response;

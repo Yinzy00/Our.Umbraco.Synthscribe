@@ -20,22 +20,22 @@ namespace Our.Umbraco.Synthscribe.OpenAi.Models
         {
             if (Type == ImageMessageType.text)
             {
-                return JsonConvert.SerializeObject(new
+                return new
                 {
                     type = Type.ToString(),
                     text = Value
-                });
+                };
             }
             else if (Type == ImageMessageType.image_url)
             {
-                return JsonConvert.SerializeObject(new
+                return new
                 {
                     type = Type.ToString(),
                     image_url = new
                     {
-                        url= Value
+                        url = Value
                     }
-                });
+                };
             }
 
             return string.Empty;
